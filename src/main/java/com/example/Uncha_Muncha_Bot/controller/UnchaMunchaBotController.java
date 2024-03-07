@@ -249,6 +249,102 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
      * For checking input message from Admin and return response
      */
     private void messageAdmin(Update update, ProfileDTO currentProfile) {
+        Message message = update.getMessage();
+        String chatId = message.getChatId().toString();
+        if (currentProfile == null||currentProfile.getPhone()==null||currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK)) {
+            sendMessageAboutInvalidInput(currentProfile.getLanguage(),chatId);
+            return;
+        }
+        Language language = currentProfile.getLanguage();
+        String currentStep = currentProfile.getCurrentStep();
+        if (message.hasLocation()) {
+            Location location = message.getLocation();
+            if (currentStep.equals(PharmacyConstants.ENTERING_PHARMACY_LOCATION)) {
+                pharmacyService.setLocation(location,currentProfile.getChangingElementId());
+                SendMessage sendMessage=new SendMessage(chatId,resourceBundleService.getMessage("accept.to.finish.creating",language));
+                sendMessage.setReplyMarkup(markUps.getAccept(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId,PharmacyConstants.ACCEPT_TO_FINISH_CREATING);
+                return;
+            }
+        }
+        if (message.hasText()) {
+            String text = message.getText();
+            if (currentStep.equals(PharmacyConstants.ENTERING_OWNER_USERNAME)) {
+                if (text.equals(resourceBundleService.getMessage("back",language))) {
+                    SendMessage sendMessage = new SendMessage(chatId,resourceBundleService.getMessage("choose.pharmacy.working.end.time", language));
+                    sendMessage.setReplyMarkup(markUps.time());
+                    executeMessage(sendMessage);
+                    profileService.changeStep(chatId,PharmacyConstants.CHOOSE_PHARMACY_WORKING_END_TIME);
+                    return;
+                }
+                pharmacyService.setUsername(text,currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.pharmacy.phone.number",language)));
+                profileService.changeStep(chatId,PharmacyConstants.ENTERING_PHARMACY_PHONE_NUMBER);
+            } else if (currentStep.equals(PharmacyConstants.ENTERING_PHARMACY_PHONE_NUMBER)) {
+                if (text.equals(resourceBundleService.getMessage("back",language))) {
+                    executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.owner.username",language)));
+                    profileService.changeStep(chatId,PharmacyConstants.ENTERING_OWNER_USERNAME);
+                    return;
+                }
+                pharmacyService.setPharmacyPhone(text,currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.pharmacy.name",language)));
+                profileService.changeStep(chatId,PharmacyConstants.ENTERING_PHARMACY_NAME);
+            } else if (currentStep.equals(PharmacyConstants.ENTERING_PHARMACY_NAME)) {
+                if (text.equals(resourceBundleService.getMessage("back",language))) {
+                    executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.pharmacy.phone.number",language)));
+                    profileService.changeStep(chatId,PharmacyConstants.ENTERING_PHARMACY_PHONE_NUMBER);
+                    return;
+                }
+                pharmacyService.setPharmacyName(text,currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.uz.info.about.pharmacy",language)));
+                profileService.changeStep(chatId,PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_UZ);
+            } else if (currentStep.equals(PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_UZ)) {
+                if (text.equals(resourceBundleService.getMessage("back",language))) {
+                    executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.pharmacy.name",language)));
+                    profileService.changeStep(chatId,PharmacyConstants.ENTERING_PHARMACY_NAME);
+                    return;
+                }
+                pharmacyService.setUzInfo(text,currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.tr.info.about.pharmacy",language)));
+                profileService.changeStep(chatId,PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_TR);
+            } else if (currentStep.equals(PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_TR)) {
+                if (text.equals(resourceBundleService.getMessage("back",language))) {
+                    executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.uz.info.about.pharmacy",language)));
+                    profileService.changeStep(chatId,PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_UZ);
+                    return;
+                }
+                pharmacyService.setTrInfo(text,currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.ru.info.about.pharmacy",language)));
+                profileService.changeStep(chatId,PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_RU);
+            } else if (currentStep.equals(PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_RU)) {
+                if (text.equals(resourceBundleService.getMessage("back",language))) {
+                    executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.tr.info.about.pharmacy",language)));
+                    profileService.changeStep(chatId,PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_TR);
+                    return;
+                }
+                pharmacyService.setRuInfo(text,currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.en.info.about.pharmacy",language)));
+                profileService.changeStep(chatId,PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_EN);
+            } else if (currentStep.equals(PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_EN)) {
+                if (text.equals(resourceBundleService.getMessage("back",language))) {
+                    executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.ru.info.about.pharmacy",language)));
+                    profileService.changeStep(chatId,PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_RU);
+                    return;
+                }
+                pharmacyService.setEnInfo(text,currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.pharmacy.location",language)));
+                profileService.changeStep(chatId,PharmacyConstants.ENTERING_PHARMACY_LOCATION);
+            } else if (currentStep.equals(PharmacyConstants.ENTERING_PHARMACY_LOCATION)) {
+                if (text.equals(resourceBundleService.getMessage("back",language))) {
+                    executeMessage(new SendMessage(chatId,resourceBundleService.getMessage("entering.en.info.about.pharmacy",language)));
+                    profileService.changeStep(chatId,PharmacyConstants.ENTERING_INFO_ABOUT_PHARMACY_EN);
+                    return;
+                }
+                sendMessageAboutInvalidInput(language,chatId);
+            }
+        }
+
 
     }
 
@@ -393,7 +489,6 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 editMessageText.setReplyMarkup(markUps.time());
                 executeEditMessage(editMessageText);
                 profileService.changeStep(chatId, PharmacyConstants.CHOOSE_PHARMACY_WORKING_START_TIME);
-            //acsept ✅-> ChooseType -> startTime -> endTime -> username -> phone -> pharmacyName -> info -> location
             }
         } else if (currentStep.equals(PharmacyConstants.CHOOSE_PHARMACY_WORKING_START_TIME)) {
             if (data.equals(CommonConstants.BACK)) {
@@ -424,13 +519,31 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 profileService.changeStep(chatId, PharmacyConstants.CHOOSE_PHARMACY_WORKING_START_TIME);
             } else if (data.endsWith(":00")) {
                 pharmacyService.setEndTime(LocalTime.parse(data),currentProfile.getChangingElementId());
-                EditMessageText editMessageText = new EditMessageText(resourceBundleService.getMessage("entering.owner.username", language));
-                editMessageText.setChatId(chatId);
-                editMessageText.setMessageId(query.getMessage().getMessageId());
-                executeEditMessage(editMessageText);
+                executeDeleteMessage(new DeleteMessage(chatId,query.getMessage().getMessageId()));
+                SendMessage sendMessage=new SendMessage(chatId,resourceBundleService.getMessage("entering.owner.username", language));
+                sendMessage.setReplyMarkup(markUps.getBackButton(language));
+                executeMessage(sendMessage);
                 profileService.changeStep(chatId,PharmacyConstants.ENTERING_OWNER_USERNAME);
             } else {
                 sendMessageAboutInvalidInput(language,chatId);
+            }
+        } else if (currentStep.equals(PharmacyConstants.ACCEPT_TO_FINISH_CREATING)) {
+            if (data.equals(SuperAdminConstants.ACCEPT)) {
+                executeDeleteMessage(new DeleteMessage(chatId,query.getMessage().getMessageId()));
+                SendMessage sendMessage=new SendMessage(chatId,resourceBundleService.getMessage("creating.finished",language));
+                sendMessage.setReplyMarkup(new ReplyKeyboardRemove(true));
+                executeMessage(sendMessage);
+                SendMessage sendMessage1=new SendMessage(chatId,resourceBundleService.getMessage("pharmacy.menu",language));
+                sendMessage1.setReplyMarkup(markUpsAdmin.pharmacyMenu(language));
+                executeMessage(sendMessage1);
+                pharmacyService.markAsDone(currentProfile.getChangingElementId());
+                profileService.changeStep(chatId, PharmacyConstants.CHOOSE_PHARMACY_TYPE);
+            } else if (data.equals(SuperAdminConstants.NO_ACCEPT)) {
+                EditMessageText editMessageText = new EditMessageText(resourceBundleService.getMessage("entering.pharmacy.location", language));
+                editMessageText.setChatId(chatId);
+                editMessageText.setMessageId(query.getMessage().getMessageId());
+                executeEditMessage(editMessageText);
+                profileService.changeStep(chatId, PharmacyConstants.ENTERING_PHARMACY_LOCATION);
             }
         }
     }
