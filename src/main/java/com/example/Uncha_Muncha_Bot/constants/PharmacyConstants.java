@@ -20,11 +20,11 @@ public interface PharmacyConstants {
     String ENTERING_OWNER_USERNAME="Entering owner username";
     String ENTERING_PHARMACY_PHONE_NUMBER="Entering pharmacy phone number";
     String ENTERING_PHARMACY_NAME="Entering pharmacy name";
-    String ENTERING_INFO_ABOUT_PHARMACY="Entering info about pharmacy";
     String ENTERING_INFO_ABOUT_PHARMACY_UZ="Entering info about pharmacy uz";
     String ENTERING_INFO_ABOUT_PHARMACY_TR="Entering info about pharmacy tr";
     String ENTERING_INFO_ABOUT_PHARMACY_RU="Entering info about pharmacy ru";
-    String ENTERING_PHARMACY_LOCATION_EN="Entering pharmacy location en";
+    String ENTERING_INFO_ABOUT_PHARMACY_EN="Entering info about pharmacy en";
+    String ENTERING_PHARMACY_LOCATION="Entering pharmacy location";
     String ACCEPT_TO_FINISH_CREATING="Accept to finish creating new pharmacy";
 
     String SENDING_PHARMACY_ID_FOR_ADD_MEDIA="Entering pharmacy id for add media";

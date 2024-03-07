@@ -60,7 +60,7 @@ public class PharmacyEntity {
     private ActiveStatus activeStatus=ActiveStatus.BLOCK;
 
     @Column(name = "created_date_time")
-    private LocalDateTime createdDateTime;
+    private LocalDateTime createdDateTime=LocalDateTime.now();
 
     @Column(name = "owner_chat_id")
     private String ownerChatId;
