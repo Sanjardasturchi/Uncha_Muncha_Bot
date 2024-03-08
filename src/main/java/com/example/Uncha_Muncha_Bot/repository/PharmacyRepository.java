@@ -54,4 +54,8 @@ public interface PharmacyRepository extends CrudRepository<PharmacyEntity,Long> 
     @Modifying
     @Query("update PharmacyEntity set activeStatus=?1 where id=?2")
     void markAsDone(ActiveStatus activeStatus, Long pharmacyId);
+    @Transactional
+    @Modifying
+    @Query("update PharmacyEntity set activeStatus=?1 where id=?2")
+    void changeStatus(ActiveStatus status, Long pharmacyId);
 }
