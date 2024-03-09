@@ -17,7 +17,7 @@ public interface PharmacyConstants {
     String CHOOSE_PHARMACY_TYPE="Choose pharmacy type";
     String CHOOSE_PHARMACY_WORKING_START_TIME="Choose pharmacy working start time";
     String CHOOSE_PHARMACY_WORKING_END_TIME="Choose pharmacy working end time";
-    String ENTERING_OWNER_USERNAME="Entering owner username";
+    String ENTERING_OWNER_USERNAME="Entering pharmacy owner username";
     String ENTERING_PHARMACY_PHONE_NUMBER="Entering pharmacy phone number";
     String ENTERING_PHARMACY_NAME="Entering pharmacy name";
     String ENTERING_INFO_ABOUT_PHARMACY_UZ="Entering info about pharmacy uz";

@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 public class HospitalServiceDTO {
     private Long id;
-    private Integer hospitalId;
+    private Long hospitalId;
     private String serviceName;
 }
