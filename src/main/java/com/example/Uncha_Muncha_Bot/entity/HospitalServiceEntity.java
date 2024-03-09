@@ -14,7 +14,7 @@ public class HospitalServiceEntity {
     private Long id;
 
     @Column(name = "hospital_id")
-    private Integer hospitalId;
+    private Long hospitalId;
 
     @Column(name = "service_name")
     private String serviceName;
