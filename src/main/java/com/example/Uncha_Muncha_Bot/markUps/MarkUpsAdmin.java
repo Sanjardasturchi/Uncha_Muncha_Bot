@@ -240,6 +240,7 @@ public class MarkUpsAdmin {
         return new InlineKeyboardMarkup(rowList);
     }
 
+
     public InlineKeyboardMarkup hospitalServices(Language language) {
         List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
         List<List<InlineKeyboardButton>> rowList = new LinkedList<>();

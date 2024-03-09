@@ -4,6 +4,7 @@ public interface HospitalConstants {
     String HOSPITAL="Hospital menu";
 
     //==============ADMIN===============
+
     String CREATE="Create new hospital";
     String ADD_MEDIA="Add media to hospital";
     String MAKE_BLOCK="Make block hospital";
