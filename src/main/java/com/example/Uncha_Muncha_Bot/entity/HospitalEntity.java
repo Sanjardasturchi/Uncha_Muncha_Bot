@@ -34,8 +34,17 @@ public class HospitalEntity {
     @Column(name = "hospital_name")
     private String hospitalName;
 
-    @Column(name = "info")
-    private String info;
+    @Column(name = "info_uz")
+    private String infoUz;
+
+    @Column(name = "info_tr")
+    private String infoTr;
+
+    @Column(name = "info_ru")
+    private String infoRu;
+
+    @Column(name = "info_en")
+    private String infoEn;
 
     @Column(name = "latitude")
     private Double latitude;

@@ -18,7 +18,10 @@ public class HospitalDTO {
     private String username;
     private String phone;
     private String hospitalName;
-    private String info;
+    private String infoUz;
+    private String infoTr;
+    private String infoRu;
+    private String infoEn;
     private Double latitude;
     private Double longitude;
     private ActiveStatus activeStatus;
