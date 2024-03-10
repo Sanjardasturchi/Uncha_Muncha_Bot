@@ -835,7 +835,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 sendMessage1.setReplyMarkup(markUpsAdmin.pharmacyMenu(language));
                 executeMessage(sendMessage1);
                 pharmacyService.markAsDone(currentProfile.getChangingElementId());
-                profileService.changeStep(chatId, PharmacyConstants.CHOOSE_PHARMACY_TYPE);
+                profileService.changeStep(chatId, PharmacyConstants.PHARMACY);
             } else if (data.equals(SuperAdminConstants.NO_ACCEPT)) {
                 EditMessageText editMessageText = new EditMessageText(resourceBundleService.getMessage("entering.pharmacy.location", language));
                 editMessageText.setChatId(chatId);
