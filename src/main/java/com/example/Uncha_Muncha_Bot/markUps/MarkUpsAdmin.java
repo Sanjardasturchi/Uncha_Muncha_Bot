@@ -405,4 +405,52 @@ public class MarkUpsAdmin {
 
         return new InlineKeyboardMarkup(rowList);
     }
+
+    public InlineKeyboardMarkup autoType(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("auto.bought.menu", language));
+        button.setCallbackData(AutoBoughtConstants.AUTO_BOUGHT_MENU);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("pharmacy.for.animals", language));
+        button.setCallbackData(AutoSalonConstants.SALON);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("pharmacy.for.animals", language));
+        button.setCallbackData(AutoServicesConstants.AUTO_SERVICES_MENU);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("pharmacy.for.animals", language));
+        button.setCallbackData(AutoSparePartsShopConstants.AUTO_SPARE_PARTS_SHOP);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
+
 }

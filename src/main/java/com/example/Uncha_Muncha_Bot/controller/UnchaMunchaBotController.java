@@ -76,8 +76,8 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
         if (update.hasMessage()) {
             ProfileDTO currentProfile = profileService.getByChatId(update.getMessage().getChatId().toString());
             /**For checking status (Block!)*/
-            if (currentProfile != null && currentProfile.getActiveStatus() != null) {
-                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK)) {
+            if ((currentProfile != null && currentProfile.getActiveStatus() != null)) {
+                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK)&&currentProfile.getPhone()!=null) {
                     if (currentProfile.getLanguage() != null) {
                         executeMessage(new SendMessage(currentProfile.getChatId(), resourceBundleService.getMessage("you.are.blocked", currentProfile.getLanguage())));
                     } else {
@@ -118,7 +118,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             ProfileDTO currentProfile = profileService.getByChatId(update.getCallbackQuery().getMessage().getChatId().toString());
             /**For checking status (Block!)*/
             if (currentProfile != null && currentProfile.getActiveStatus() != null) {
-                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK)) {
+                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK)&&currentProfile.getPhone()!=null) {
                     if (currentProfile.getLanguage() != null) {
                         executeMessage(new SendMessage(currentProfile.getChatId(), resourceBundleService.getMessage("you.are.blocked", currentProfile.getLanguage())));
                     } else {
@@ -991,18 +991,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
 
             }
         }
-        try {
-            workbook.write(new FileOutputStream("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\pharmacy.xlsx"));
-            workbook.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\pharmacy.xlsx")));
-        executeDocument(sendDocument);
-        executeDeleteMessage(new DeleteMessage(chatId, message.getMessageId()));
-        SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("pharmacy.menu", language));
-        sendMessage.setReplyMarkup(markUpsAdmin.pharmacyMenu(language));
-        executeMessage(sendMessage);
+
     }
 
     private void sendHospitalList(Message message, String chatId, Language language, List<HospitalDTO> hospitalList) {
