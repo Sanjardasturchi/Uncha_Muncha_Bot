@@ -1232,6 +1232,36 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 executeMessage(sendMessage);
                 profileService.changeStep(chatId, AutoBoughtConstants.ENTER_CITY);
             }
+        } else if (currentStep.equals(AutoBoughtConstants.CHOOSE_START_TIME)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("choose .sale.type", language));
+                sendMessage.setReplyMarkup(markUps.sellType(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.CHOOSE_SELL_TYPE);
+            } else if ("CAR,TRUCK".contains(data)) {
+                autoService.setCarType(data, currentProfile.getChangingElementId());
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("enter.city", language));
+                sendMessage.setReplyMarkup(markUps.getBackButton(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_CITY);
+            }
+        } else if (currentStep.equals(AutoBoughtConstants.CHOOSE_END_TIME)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("choose.sale.type", language));
+                sendMessage.setReplyMarkup(markUps.sellType(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.CHOOSE_SELL_TYPE);
+            } else if ("CAR,TRUCK".contains(data)) {
+                autoService.setCarType(data, currentProfile.getChangingElementId());
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("enter.city", language));
+                sendMessage.setReplyMarkup(markUps.getBackButton(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_CITY);
+            }
         } else if (currentStep.equals(AutoBoughtConstants.ACCEPT_TO_FINISH_CREATING)) {
             if (data.equals(SuperAdminConstants.ACCEPT)) {
                 autoService.changeStatus(ActiveStatus.ACTIVE,currentProfile.getChangingElementId());

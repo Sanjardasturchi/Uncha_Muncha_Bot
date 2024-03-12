@@ -23,4 +23,6 @@ public class AutoBoughtConstants {
     public static final String ENTER_INFO_EN = "Enter auto info en";
     public static final String ENTER_LOCATION = "Enter auto location";
     public static final String ACCEPT_TO_FINISH_CREATING = "Accept to finish creating new auto";
+    public static final String CHOOSE_START_TIME = "";
+    public static final String CHOOSE_END_TIME = "";
 }
