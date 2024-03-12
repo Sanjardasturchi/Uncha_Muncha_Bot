@@ -1623,18 +1623,13 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 cell15.setCellValue(pharmacy.getOwnerChatId());
             }
         }
-        try {
-            workbook.write(new FileOutputStream("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\pharmacy.xlsx"));
-            workbook.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\pharmacy.xlsx")));
-        executeDocument(sendDocument);
-        executeDeleteMessage(new DeleteMessage(chatId, message.getMessageId()));
-        SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("pharmacy.menu", language));
-        sendMessage.setReplyMarkup(markUpsAdmin.pharmacyMenu(language));
-        executeMessage(sendMessage);
+
+//        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\pharmacy.xlsx")));
+//        executeDocument(sendDocument);
+//        executeDeleteMessage(new DeleteMessage(chatId, message.getMessageId()));
+//        SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("pharmacy.menu", language));
+//        sendMessage.setReplyMarkup(markUpsAdmin.pharmacyMenu(language));
+//        executeMessage(sendMessage);
     }
 
     // ===================================== SUPER_ADMIN ================
