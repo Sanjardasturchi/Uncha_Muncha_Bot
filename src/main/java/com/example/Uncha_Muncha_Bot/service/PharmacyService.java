@@ -3,6 +3,8 @@ package com.example.Uncha_Muncha_Bot.service;
 import com.example.Uncha_Muncha_Bot.dto.PharmacyDTO;
 import com.example.Uncha_Muncha_Bot.entity.PharmacyEntity;
 import com.example.Uncha_Muncha_Bot.enums.ActiveStatus;
+import com.example.Uncha_Muncha_Bot.enums.PharmacyType;
+import com.example.Uncha_Muncha_Bot.mapper.PharmacyMapper;
 import com.example.Uncha_Muncha_Bot.repository.PharmacyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,6 @@ import org.telegram.telegrambots.meta.api.objects.Location;
 import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PharmacyService {
@@ -137,5 +138,9 @@ public class PharmacyService {
 
     public void changeStatus(ActiveStatus status, Long pharmacyId) {
         pharmacyRepository.changeStatus(status,pharmacyId);
+    }
+
+    public List<PharmacyMapper> get10pharmacy(Double latitude, Double longitude, PharmacyType pharmacy) {
+        return pharmacyRepository.get10pharmacy(latitude, longitude,pharmacy);
     }
 }

@@ -28,4 +28,5 @@ public class PharmacyDTO {
     private ActiveStatus activeStatus;
     private LocalDateTime createdDateTime;
     private String ownerChatId;
+    private Double distance;
 }
