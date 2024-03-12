@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td a {
+            color: #33302e; /* link rangi */
+            text-decoration: none; /* link tagiga havola chizishini to'xtatish */
+            transition: color 0.3s; /* rang o'zgarishi animatsiyasi */
+        }
+
+        td a:hover {
+            color: #131211; /* qorali rangi */
+            text-decoration: underline; /* hover qilganda chiziq chizish */
+        }
+
+
+        table td, table th {
+            border: 1px solid #cccccc;
+            padding: 10px;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #cccccc;
+        }
+
+        table tr:hover {
+            background-color: rgba(197, 209, 215, 0.94);
+            cursor: pointer;
+        }
+
+        table th {
+            border: 1px solid #cccccc;
+            text-align: left;
+            background-color: #1b1b3f;
+            color: #cccccc;
+        }
+
+    </style>
+</head>
+<body>
+<h1 style="text-align: center">Pharmacy List</h1>
+<br>
+<!--<a th:href="@{/pharmacy/go-to-add}">Add Pharmacy</a>-->
+<!--<br>-->
+
+<table>
+    <tr>
+        <th>№</th>
+        <th>Id</th>
+        <th>InfoUz</th>
+        <th>InfoTr</th>
+        <th>InfoRu</th>
+        <th>InfoEn</th>
+        <th>pharmacyType</th>
+        <th>startTime</th>
+        <th>endTime</th>
+        <th>username</th>
+        <th>phone</th>
+        <th>pharmacyName</th>
+        <th>activeStatus</th>
+        <th>edit</th>
+    </tr>
+    <tr th:each="pharmacy, iStat : ${pharmacyList}">
+        <td th:text="${iStat.count +1}"></td>
+        <td th:text="${pharmacy.id}"></td>
+        <td th:text="${pharmacy.infoUz}"></td>
+        <td th:text="${pharmacy.infoTr}"></td>
+        <td th:text="${pharmacy.infoRu}"></td>
+        <td th:text="${pharmacy.infoEn}"></td>
+        <td th:text="${pharmacy.pharmacyType}"></td>
+        <td th:text="${pharmacy.startTime}"></td>
+        <td th:text="${pharmacy.endTime}"></td>
+        <td th:text="${pharmacy.username}"></td>
+        <td th:text="${pharmacy.phone}"></td>
+        <td th:text="${pharmacy.pharmacyName}"></td>
+        <td th:text="${pharmacy.activeStatus}"></td>
+        <td>
+            <a th:href="@{/pharmacy/go-to-edit/{pharmacyId}(pharmacyId=${pharmacy.id})}">Edit</a> ,
+            <a th:href="@{/pharmacy/delete}">Delete</a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
+
