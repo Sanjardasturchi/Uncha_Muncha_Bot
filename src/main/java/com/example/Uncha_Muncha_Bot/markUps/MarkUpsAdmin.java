@@ -1,6 +1,7 @@
 package com.example.Uncha_Muncha_Bot.markUps;
 
 import com.example.Uncha_Muncha_Bot.constants.*;
+import com.example.Uncha_Muncha_Bot.enums.CarType;
 import com.example.Uncha_Muncha_Bot.enums.HospitalService;
 import com.example.Uncha_Muncha_Bot.enums.Language;
 import com.example.Uncha_Muncha_Bot.service.ResourceBundleService;
@@ -66,14 +67,6 @@ public class MarkUpsAdmin {
         buttonsRow = new LinkedList<>();
 
         button.setText(resourceBundleService.getMessage("dining.room.menu", language));
-        button.setCallbackData(ShopConstants.SHOP);
-
-        buttonsRow.add(button);
-        rowList.add(buttonsRow);
-        button = new InlineKeyboardButton();
-        buttonsRow = new LinkedList<>();
-
-        button.setText(resourceBundleService.getMessage("auto.salon.menu", language));
         button.setCallbackData(ShopConstants.SHOP);
 
         buttonsRow.add(button);
@@ -240,7 +233,6 @@ public class MarkUpsAdmin {
         return new InlineKeyboardMarkup(rowList);
     }
 
-
     public InlineKeyboardMarkup hospitalServices(Language language) {
         List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
         List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
@@ -406,7 +398,7 @@ public class MarkUpsAdmin {
         return new InlineKeyboardMarkup(rowList);
     }
 
-    public InlineKeyboardMarkup autoType(Language language) {
+    public InlineKeyboardMarkup autoMenu(Language language) {
         List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
         List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
 
@@ -420,7 +412,7 @@ public class MarkUpsAdmin {
         button = new InlineKeyboardButton();
         buttonsRow = new LinkedList<>();
 
-        button.setText(resourceBundleService.getMessage("pharmacy.for.animals", language));
+        button.setText(resourceBundleService.getMessage("auto.salon.menu", language));
         button.setCallbackData(AutoSalonConstants.SALON);
 
         buttonsRow.add(button);
@@ -428,7 +420,7 @@ public class MarkUpsAdmin {
         button = new InlineKeyboardButton();
         buttonsRow = new LinkedList<>();
 
-        button.setText(resourceBundleService.getMessage("pharmacy.for.animals", language));
+        button.setText(resourceBundleService.getMessage("auto.services.menu", language));
         button.setCallbackData(AutoServicesConstants.AUTO_SERVICES_MENU);
 
         buttonsRow.add(button);
@@ -436,7 +428,7 @@ public class MarkUpsAdmin {
         button = new InlineKeyboardButton();
         buttonsRow = new LinkedList<>();
 
-        button.setText(resourceBundleService.getMessage("pharmacy.for.animals", language));
+        button.setText(resourceBundleService.getMessage("auto.spare.parts.menu", language));
         button.setCallbackData(AutoSparePartsShopConstants.AUTO_SPARE_PARTS_SHOP);
 
         buttonsRow.add(button);
@@ -453,4 +445,286 @@ public class MarkUpsAdmin {
         return new InlineKeyboardMarkup(rowList);
     }
 
+    public ReplyKeyboard autoBuyMenu(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("create.new", language));
+        button.setCallbackData(AutoBoughtConstants.CREAT);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("add.media", language));
+        button.setCallbackData(AutoBoughtConstants.ADD_MEDIA);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("block", language));
+        button.setCallbackData(AutoBoughtConstants.BLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("unblock", language));
+        button.setCallbackData(AutoBoughtConstants.UNBLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.all", language));
+        button.setCallbackData(AutoBoughtConstants.GET_ALL);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.by.id", language));
+        button.setCallbackData(AutoBoughtConstants.GET_BY_ID);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
+
+    public ReplyKeyboard autoSalonMenu(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("create.new", language));
+        button.setCallbackData(AutoSalonConstants.CREAT);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("add.media", language));
+        button.setCallbackData(AutoSalonConstants.ADD_MEDIA);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("block", language));
+        button.setCallbackData(AutoSalonConstants.BLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("unblock", language));
+        button.setCallbackData(AutoSalonConstants.UNBLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.all", language));
+        button.setCallbackData(AutoSalonConstants.GET_ALL);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.by.id", language));
+        button.setCallbackData(AutoSalonConstants.GET_BY_ID);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
+
+    public ReplyKeyboard autoServicesMenu(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("create.new", language));
+        button.setCallbackData(AutoServicesConstants.CREAT);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("add.media", language));
+        button.setCallbackData(AutoServicesConstants.ADD_MEDIA);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("block", language));
+        button.setCallbackData(AutoServicesConstants.BLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("unblock", language));
+        button.setCallbackData(AutoServicesConstants.UNBLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.all", language));
+        button.setCallbackData(AutoServicesConstants.GET_ALL);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.by.id", language));
+        button.setCallbackData(AutoServicesConstants.GET_BY_ID);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
+
+    public ReplyKeyboard autoSparePartsMenu(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("create.new", language));
+        button.setCallbackData(AutoSparePartsShopConstants.CREAT);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("add.media", language));
+        button.setCallbackData(AutoSparePartsShopConstants.ADD_MEDIA);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("block", language));
+        button.setCallbackData(AutoSparePartsShopConstants.BLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("unblock", language));
+        button.setCallbackData(AutoSparePartsShopConstants.UNBLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.all", language));
+        button.setCallbackData(AutoSparePartsShopConstants.GET_ALL);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.by.id", language));
+        button.setCallbackData(AutoSparePartsShopConstants.GET_BY_ID);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
+
+    public ReplyKeyboard carType(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("car", language));
+        button.setCallbackData(CarType.CAR.name());
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("truck", language));
+        button.setCallbackData(CarType.TRUCK.name());
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
 }
