@@ -2,7 +2,9 @@ package com.example.Uncha_Muncha_Bot.markUps;
 
 import com.example.Uncha_Muncha_Bot.constants.CommonConstants;
 import com.example.Uncha_Muncha_Bot.constants.SuperAdminConstants;
+import com.example.Uncha_Muncha_Bot.enums.CarType;
 import com.example.Uncha_Muncha_Bot.enums.Language;
+import com.example.Uncha_Muncha_Bot.enums.SalaryType;
 import com.example.Uncha_Muncha_Bot.service.ResourceBundleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -145,6 +147,45 @@ public class MarkUps {
         button.setCallbackData(CommonConstants.BACK);
         buttons.add(button);
         rowList.add(buttons);
+        return new InlineKeyboardMarkup(rowList);
+    }
+
+    public ReplyKeyboard sellType(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("sale", language));
+        button.setCallbackData(SalaryType.SALE.name());
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("rent", language));
+        button.setCallbackData(SalaryType.RENT.name());
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("all.two", language));
+        button.setCallbackData(SalaryType.ALL.name());
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
         return new InlineKeyboardMarkup(rowList);
     }
 }

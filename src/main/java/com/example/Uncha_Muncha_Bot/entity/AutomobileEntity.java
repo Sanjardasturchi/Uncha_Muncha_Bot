@@ -20,8 +20,10 @@ public class AutomobileEntity {
     private Long id;
     @Column(name = "city")
     private String city;
+    @Enumerated(EnumType.STRING)
     @Column(name = "car_type")
     private CarType carType;
+    @Enumerated(EnumType.STRING)
     @Column(name = "salary_type")
     private SalaryType salaryType;
     @Column(name = "brand_name")
@@ -34,8 +36,17 @@ public class AutomobileEntity {
     private String phone;
     @Column(name = "username")
     private String username;
-    @Column(name = "info")
-    private String info;
+    @Column(name = "info_uz")
+    private String infoUz;
+
+    @Column(name = "info_tr")
+    private String infoTr;
+
+    @Column(name = "info_ru")
+    private String infoRu;
+
+    @Column(name = "info_en")
+    private String infoEn;
     @Column(name = "district")
     private String district;
     @Column(name = "start_time")
@@ -48,6 +59,7 @@ public class AutomobileEntity {
     private Double longitude;
     @Column(name = "created_date_time")
     private LocalDateTime createdDateTime;
+    @Enumerated(EnumType.STRING)
     @Column(name = "active_status")
     private ActiveStatus activeStatus;
     @Column(name = "owner_chat_id")

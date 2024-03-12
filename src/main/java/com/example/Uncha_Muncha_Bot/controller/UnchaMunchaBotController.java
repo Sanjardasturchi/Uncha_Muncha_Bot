@@ -70,6 +70,8 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
     private HospitalService hospitalService;
     @Autowired
     private HospitalServicesService hospitalServicesService;
+    @Autowired
+    private AutoService autoService;
 
     @Override
     public void handle(Update update) {
@@ -77,7 +79,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             ProfileDTO currentProfile = profileService.getByChatId(update.getMessage().getChatId().toString());
             /**For checking status (Block!)*/
             if ((currentProfile != null && currentProfile.getActiveStatus() != null)) {
-                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK)&&currentProfile.getPhone()!=null) {
+                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK) && currentProfile.getPhone() != null) {
                     if (currentProfile.getLanguage() != null) {
                         executeMessage(new SendMessage(currentProfile.getChatId(), resourceBundleService.getMessage("you.are.blocked", currentProfile.getLanguage())));
                     } else {
@@ -118,7 +120,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             ProfileDTO currentProfile = profileService.getByChatId(update.getCallbackQuery().getMessage().getChatId().toString());
             /**For checking status (Block!)*/
             if (currentProfile != null && currentProfile.getActiveStatus() != null) {
-                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK)&&currentProfile.getPhone()!=null) {
+                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK) && currentProfile.getPhone() != null) {
                     if (currentProfile.getLanguage() != null) {
                         executeMessage(new SendMessage(currentProfile.getChatId(), resourceBundleService.getMessage("you.are.blocked", currentProfile.getLanguage())));
                     } else {
@@ -278,6 +280,12 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 sendMessage.setReplyMarkup(markUps.getAccept(language));
                 executeMessage(sendMessage);
                 profileService.changeStep(chatId, HospitalConstants.ACCEPT_TO_FINISH_CREATING);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_LOCATION)) {
+                autoService.setLocation(location,currentProfile.getChangingElementId());
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("accept.to.finish.creating", language));
+                sendMessage.setReplyMarkup(markUps.getAccept(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.ACCEPT_TO_FINISH_CREATING);
             }
         }
         if (message.hasPhoto() || message.hasVideo()) {
@@ -643,7 +651,132 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                     sendMessageAboutInvalidInput(language, chatId);
                 }
 
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_CITY)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("choose.auto.type", language));
+                    sendMessage.setReplyMarkup(markUpsAdmin.carType(language));
+                    executeMessage(sendMessage);
+                    profileService.changeStep(chatId, AutoBoughtConstants.CHOOSE_AUTO_TYPE);
+                    return;
+                }
+                autoService.setCity(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.district", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_DISTRICT);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_DISTRICT)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.city", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_CITY);
+                    return;
+                }
+                autoService.setDistrict(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.brand", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_BRAND_NAME);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_BRAND_NAME)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.district", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_DISTRICT);
+                    return;
+                }
+                autoService.setBrandName(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.model", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_MODEL_NAME);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_MODEL_NAME)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.brand", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_BRAND_NAME);
+                    return;
+                }
+                autoService.setModelName(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.price", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_PRICE);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_PRICE)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.model", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_MODEL_NAME);
+                    return;
+                }
+                try {
+                Double price = Double.valueOf(GeneralService.checkMoneyFromTheString(text));
+                autoService.setPrice(String.valueOf(price), currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.phone", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_PHONE);
+                }catch (Exception e){
+                    sendMessageAboutInvalidInput(language,chatId);
+                }
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_PHONE)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.model", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_PRICE);
+                    return;
+                }
+                autoService.setPhone(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.username", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_USERNAME);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_USERNAME)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.phone", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_PHONE);
+                    return;
+                }
+                autoService.setUsername(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.info.uz", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_INFO_UZ);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_INFO_UZ)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.username", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_USERNAME);
+                    return;
+                }
+                autoService.setInfoUz(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.info.tr", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_INFO_TR);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_INFO_TR)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.info.uz", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_INFO_UZ);
+                    return;
+                }
+                autoService.setInfoTr(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.info.ru", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_INFO_RU);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_INFO_RU)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.info.tr", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_INFO_TR);
+                    return;
+                }
+                autoService.setInfoRu(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.info.en", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_INFO_EN);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_INFO_EN)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.info.ru", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_INFO_RU);
+                    return;
+                }
+                autoService.setInfoEn(text, currentProfile.getChangingElementId());
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.location", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_LOCATION);
+            } else if (currentStep.equals(AutoBoughtConstants.ENTER_LOCATION)) {
+                if (text.equals(CommonConstants.BACK)) {
+                    executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.info.en", language)));
+                    profileService.changeStep(chatId, AutoBoughtConstants.ENTER_INFO_EN);
+                    return;
+                }
             }
+            // Automobile
+            //        1.Creat
+            //           accept -> carType -> salaryType -> city -> (district) -> BrandName -> ModelName -> price -> phone -> username -> info(uz,tr,ru,en) -> startTime -> endTime
+            //        2.Add Photo
+            //           id -> photo
+            //        3.Add Video
+            //           id -> video
+            //        4.Make Block
+            //           id
+            //        5.Make UnBlock
+            //           id
+            //        6.Take All
+            //        7.Take By id
         }
 
 
@@ -691,8 +824,10 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 executeEditMessage(editMessageText);
                 profileService.changeStep(chatId, HospitalConstants.HOSPITAL);
             } else if (data.equals(AutoConstants.AUTO)) {
-                //todo
-
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoMenu(language));
+                executeMessage(sendMessage);
                 profileService.changeStep(chatId, AutoConstants.AUTO);
             } else if (data.equals(HouseConstants.HOUSE)) {
                 //todo
@@ -989,6 +1124,204 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 executeEditMessage(editMessageText);
                 profileService.changeStep(chatId, HospitalConstants.ENTERING_HOSPITAL_LOCATION);
 
+            }
+        } else if (currentStep.equals(AutoConstants.AUTO)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.menu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, CommonConstants.MENU);
+            } else if (data.equals(AutoBoughtConstants.AUTO_BOUGHT_MENU)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.bought.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoBuyMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.AUTO_BOUGHT_MENU);
+            } else if (data.equals(AutoSalonConstants.SALON)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.salon.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoSalonMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoSalonConstants.SALON);
+            } else if (data.equals(AutoServicesConstants.AUTO_SERVICES_MENU)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.services.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoServicesMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoServicesConstants.AUTO_SERVICES_MENU);
+            } else if (data.equals(AutoSparePartsShopConstants.AUTO_SPARE_PARTS_SHOP)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.spare.parts.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoSparePartsMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoSparePartsShopConstants.AUTO_SPARE_PARTS_SHOP);
+            } else {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+            }
+        } else if (currentStep.equals(AutoBoughtConstants.AUTO_BOUGHT_MENU)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoConstants.AUTO);
+            } else if (data.equals(AutoBoughtConstants.CREAT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("create.new", language));
+                sendMessage.setReplyMarkup(markUps.getAccept(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.CREAT);
+            } else if (data.equals(AutoBoughtConstants.ADD_MEDIA)) {
+                //todo
+            } else if (data.equals(AutoBoughtConstants.BLOCK)) {
+                //todo
+            } else if (data.equals(AutoBoughtConstants.UNBLOCK)) {
+                //todo
+            } else if (data.equals(AutoBoughtConstants.GET_ALL)) {
+                //todo
+            } else if (data.equals(AutoBoughtConstants.GET_BY_ID)) {
+                //todo
+            } else {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+            }
+        } else if (currentStep.equals(AutoBoughtConstants.CREAT)) {
+            if (data.equals(SuperAdminConstants.ACCEPT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                Long autoId = autoService.createAuto(chatId);
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("automobile.id", language) + " " + autoId));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("choose.sale.type", language));
+                sendMessage.setReplyMarkup(markUps.sellType(language));
+                executeMessage(sendMessage);
+                profileService.changeChangingElementId(chatId, autoId);
+                profileService.changeStep(chatId, AutoBoughtConstants.CHOOSE_SELL_TYPE);
+            } else if (data.equals(SuperAdminConstants.NO_ACCEPT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.bought.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoBuyMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.AUTO_BOUGHT_MENU);
+            }
+        } else if (currentStep.equals(AutoBoughtConstants.CHOOSE_SELL_TYPE)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.bought.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoBuyMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.AUTO_BOUGHT_MENU);
+            } else if ("SALE,RENT,ALL".contains(data)) {
+                autoService.setSaleType(data, currentProfile.getChangingElementId());
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("choose.auto.type", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.carType(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.CHOOSE_AUTO_TYPE);
+            }
+        } else if (currentStep.equals(AutoBoughtConstants.CHOOSE_AUTO_TYPE)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("choose.sale.type", language));
+                sendMessage.setReplyMarkup(markUps.sellType(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.CHOOSE_SELL_TYPE);
+            } else if ("CAR,TRUCK".contains(data)) {
+                autoService.setCarType(data, currentProfile.getChangingElementId());
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("enter.city", language));
+                sendMessage.setReplyMarkup(markUps.getBackButton(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_CITY);
+            }
+        } else if (currentStep.equals(AutoBoughtConstants.ACCEPT_TO_FINISH_CREATING)) {
+            if (data.equals(SuperAdminConstants.ACCEPT)) {
+                autoService.changeStatus(ActiveStatus.ACTIVE,currentProfile.getChangingElementId());
+                SendMessage sendMessage=new SendMessage(chatId,resourceBundleService.getMessage("auto.bought.menu",language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoBuyMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId,AutoBoughtConstants.AUTO_BOUGHT_MENU);
+            } else if (data.equals(SuperAdminConstants.NO_ACCEPT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.location", language)));
+                profileService.changeStep(chatId, AutoBoughtConstants.ENTER_LOCATION);
+            }
+        } else if (currentStep.equals(AutoSalonConstants.SALON)) {
+
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoSalonConstants.CREAT);
+            } else if (data.equals(AutoSalonConstants.CREAT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("create.new", language));
+                sendMessage.setReplyMarkup(markUps.getAccept(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoBoughtConstants.CREAT);
+            } else if (data.equals(AutoSalonConstants.ADD_MEDIA)) {
+                //todo
+            } else if (data.equals(AutoSalonConstants.BLOCK)) {
+                //todo
+            } else if (data.equals(AutoSalonConstants.UNBLOCK)) {
+                //todo
+            } else if (data.equals(AutoSalonConstants.GET_ALL)) {
+                //todo
+            } else if (data.equals(AutoSalonConstants.GET_BY_ID)) {
+                //todo
+            } else {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+            }
+        } else if (currentStep.equals(AutoServicesConstants.AUTO_SERVICES_MENU)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoConstants.AUTO);
+            } else if (data.equals(AutoServicesConstants.CREAT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("create.new", language));
+                sendMessage.setReplyMarkup(markUps.getAccept(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoServicesConstants.CREAT);
+            } else if (data.equals(AutoServicesConstants.ADD_MEDIA)) {
+                //todo
+            } else if (data.equals(AutoServicesConstants.BLOCK)) {
+                //todo
+            } else if (data.equals(AutoServicesConstants.UNBLOCK)) {
+                //todo
+            } else if (data.equals(AutoServicesConstants.GET_ALL)) {
+                //todo
+            } else if (data.equals(AutoServicesConstants.GET_BY_ID)) {
+                //todo
+            } else {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+            }
+        } else if (currentStep.equals(AutoSparePartsShopConstants.AUTO_SPARE_PARTS_SHOP)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoConstants.AUTO);
+            } else if (data.equals(AutoSparePartsShopConstants.CREAT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("create.new", language));
+                sendMessage.setReplyMarkup(markUps.getAccept(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoSparePartsShopConstants.CREAT);
+            } else if (data.equals(AutoSparePartsShopConstants.ADD_MEDIA)) {
+                //todo
+            } else if (data.equals(AutoSparePartsShopConstants.BLOCK)) {
+                //todo
+            } else if (data.equals(AutoSparePartsShopConstants.UNBLOCK)) {
+                //todo
+            } else if (data.equals(AutoSparePartsShopConstants.GET_ALL)) {
+                //todo
+            } else if (data.equals(AutoSparePartsShopConstants.GET_BY_ID)) {
+                //todo
+            } else {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
             }
         }
 
