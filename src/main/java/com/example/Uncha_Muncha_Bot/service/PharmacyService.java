@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.Location;
 import java.time.LocalTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PharmacyService {
@@ -136,6 +135,64 @@ public class PharmacyService {
     }
 
     public void changeStatus(ActiveStatus status, Long pharmacyId) {
-        pharmacyRepository.changeStatus(status,pharmacyId);
+        pharmacyRepository.changeStatus(status, pharmacyId);
     }
+
+    public List<PharmacyDTO> findAll() {
+        Iterable<PharmacyEntity> all = pharmacyRepository.findAll();
+        List<PharmacyDTO> dtoList = new LinkedList<>();
+        for (PharmacyEntity pharmacy : all) {
+            PharmacyDTO dto = new PharmacyDTO();
+            dto.setId(pharmacy.getId());
+            dto.setInfoEn(pharmacy.getInfoEn());
+            dto.setInfoTr(pharmacy.getInfoTr());
+            dto.setInfoUz(pharmacy.getInfoUz());
+            dto.setInfoRu(pharmacy.getInfoRu());
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+    public List<PharmacyDTO> getList() {
+        Iterable<PharmacyEntity> all = pharmacyRepository.getAllByCreatedDateTime();
+        List<PharmacyDTO> dtoList = new LinkedList<>();
+        for (PharmacyEntity pharmacy : all) {
+            PharmacyDTO dto = new PharmacyDTO();
+            dto.setId(pharmacy.getId());
+            dto.setInfoEn(pharmacy.getInfoEn());
+            dto.setInfoTr(pharmacy.getInfoTr());
+            dto.setInfoUz(pharmacy.getInfoUz());
+            dto.setInfoRu(pharmacy.getInfoRu());
+            dto.setPharmacyType(pharmacy.getPharmacyType());
+            dto.setStartTime(pharmacy.getStartTime());
+            dto.setEndTime(pharmacy.getEndTime());
+            dto.setUsername(pharmacy.getUsername());
+            dto.setPhone(pharmacy.getPhone());
+            dto.setPharmacyName(pharmacy.getPharmacyName());
+            dto.setActiveStatus(pharmacy.getActiveStatus());
+
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
+
+
+    public void update(PharmacyDTO dto) {
+        PharmacyEntity entity = new PharmacyEntity();
+        entity.setId(dto.getId());
+        entity.setInfoEn(dto.getInfoEn());
+        entity.setInfoTr(dto.getInfoTr());
+        entity.setInfoUz(dto.getInfoUz());
+        entity.setInfoRu(dto.getInfoRu());
+        entity.setPharmacyType(dto.getPharmacyType());
+        entity.setStartTime(dto.getStartTime());
+        entity.setEndTime(dto.getEndTime());
+        entity.setUsername(dto.getUsername());
+        entity.setPhone(dto.getPhone());
+        entity.setPharmacyName(dto.getPharmacyName());
+        entity.setActiveStatus(dto.getActiveStatus());
+        pharmacyRepository.save(entity);
+    }
+
 }
+
