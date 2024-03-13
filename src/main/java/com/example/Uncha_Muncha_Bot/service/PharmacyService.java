@@ -143,7 +143,7 @@ public class PharmacyService {
     public List<PharmacyMapper> get10pharmacy(Double latitude, Double longitude, String pharmacy) {
         return pharmacyRepository.get10pharmacy(latitude, longitude,pharmacy);
     }
-}
+
 
     public List<PharmacyDTO> findAll() {
         Iterable<PharmacyEntity> all = pharmacyRepository.findAll();

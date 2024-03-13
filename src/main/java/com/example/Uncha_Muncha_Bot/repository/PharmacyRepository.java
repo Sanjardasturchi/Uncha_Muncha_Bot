@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalTime;
+import java.util.List;
 
 public interface PharmacyRepository extends CrudRepository<PharmacyEntity, Long> {
     @Transactional
