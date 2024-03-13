@@ -8,18 +8,16 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
 @Setter
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PharmacyDTO {
+public class AutoSalonDTO {
     private Long id;
-    private PharmacyType pharmacyType;
     private LocalTime startTime;
     private LocalTime endTime;
     private String username;
     private String phone;
-    private String pharmacyName;
+    private String salonName;
     private ActiveStatus activeStatus;
     private String infoUz;
     private String infoTr;
@@ -29,5 +27,4 @@ public class PharmacyDTO {
     private Double longitude;
     private LocalDateTime createdDateTime;
     private String ownerChatId;
-    private Double distance;
 }
