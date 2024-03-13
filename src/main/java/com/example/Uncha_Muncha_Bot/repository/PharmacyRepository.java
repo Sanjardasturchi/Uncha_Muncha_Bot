@@ -62,6 +62,6 @@ public interface PharmacyRepository extends CrudRepository<PharmacyEntity,Long> 
     @Query("update PharmacyEntity set activeStatus=?1 where id=?2")
     void changeStatus(ActiveStatus status, Long pharmacyId);
 
-    @Query(value = "SELECT get_nearest_pharmacies(?1,?2,?3)",nativeQuery = true)
-    List<PharmacyMapper> get10pharmacy(Double latitude, Double longitude, PharmacyType pharmacy);
+    @Query(value = "SELECT * from get_nearest_pharmacies(?1,?2,?3)",nativeQuery = true)
+    List<PharmacyMapper> get10pharmacy(Double latitude, Double longitude, String pharmacy);
 }

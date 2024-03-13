@@ -4,16 +4,17 @@ import java.time.LocalTime;
 
 public interface PharmacyMapper {
     Long getPharmacyId();
-
     String getPharmacyName();
-    String getPharmacyPhone();
+    String getPhone();
     LocalTime getPharmacyStartTime();
     LocalTime getPharmacyEndTime();
-    String getInfoUz();
-    String getInfoRu();
-    String getInfoEn();
-    String getInfoTr();
-    String getPharmacyUserName();
+    String getPharmacyUz();
+    String getPharmacyRu();
+    String getPharmacyEn();
+    String getPharmacyTr();
+    String getUserName();
     Double getDistance();
+    Double getLatitude();
+    Double getLongitude();
 
 }

@@ -35,7 +35,7 @@ public interface PharmacyConstants {
     String SENDING_MEDIA="Entering Media";
 //    ======================USER======================
     String SEND_LOCATION_FOR_PEOPLE_PHARMACY="Send location for people pharmacy";
-    String SEND_LOCATION_FOR_ANIMALS_PHARMACY="Send location for people pharmacy";
+    String SEND_LOCATION_FOR_ANIMALS_PHARMACY="Send location for animals pharmacy";
 
 
 }

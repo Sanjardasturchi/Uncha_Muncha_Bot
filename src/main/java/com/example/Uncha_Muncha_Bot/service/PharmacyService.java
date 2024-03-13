@@ -140,7 +140,7 @@ public class PharmacyService {
         pharmacyRepository.changeStatus(status,pharmacyId);
     }
 
-    public List<PharmacyMapper> get10pharmacy(Double latitude, Double longitude, PharmacyType pharmacy) {
+    public List<PharmacyMapper> get10pharmacy(Double latitude, Double longitude, String pharmacy) {
         return pharmacyRepository.get10pharmacy(latitude, longitude,pharmacy);
     }
 }
