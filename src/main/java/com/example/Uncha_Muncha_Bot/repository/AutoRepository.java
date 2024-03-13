@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalTime;
+
 public interface AutoRepository extends CrudRepository<AutomobileEntity,Long> {
     @Transactional
     @Modifying
@@ -84,4 +86,14 @@ public interface AutoRepository extends CrudRepository<AutomobileEntity,Long> {
     @Modifying
     @Query("update AutomobileEntity set username=?1 where id=?2")
     void setUsername(String username, Long autoId);
+
+    @Transactional
+    @Modifying
+    @Query("update AutomobileEntity set startTime=?1 where id=?2")
+    void setStartTime(LocalTime parse, Long autoId);
+
+    @Transactional
+    @Modifying
+    @Query("update AutomobileEntity set endTime=?1 where id=?2")
+    void setEndTime(LocalTime parse, Long autoId);
 }
