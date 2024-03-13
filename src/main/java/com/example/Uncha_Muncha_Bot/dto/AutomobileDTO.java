@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -21,7 +22,10 @@ public class AutomobileDTO {
     private Double price;
     private String phone;
     private String username;
-    private String info;
+    private String infoUz;
+    private String infoTr;
+    private String infoRu;
+    private String infoEn;
     private String district;
     private LocalTime startTime;
     private LocalTime endTime;
