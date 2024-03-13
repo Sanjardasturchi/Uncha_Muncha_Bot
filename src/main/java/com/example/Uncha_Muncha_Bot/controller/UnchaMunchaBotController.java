@@ -4,6 +4,7 @@ import com.example.Uncha_Muncha_Bot.constants.*;
 import com.example.Uncha_Muncha_Bot.dto.*;
 import com.example.Uncha_Muncha_Bot.entity.HospitalServiceEntity;
 import com.example.Uncha_Muncha_Bot.enums.*;
+import com.example.Uncha_Muncha_Bot.mapper.PharmacyMapper;
 import com.example.Uncha_Muncha_Bot.markUps.MarkUpsAdmin;
 import com.example.Uncha_Muncha_Bot.markUps.MarkUps;
 import com.example.Uncha_Muncha_Bot.markUps.MarkUpsSuperAdmin;
@@ -121,8 +122,8 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
         } else if (update.hasCallbackQuery()) {
             ProfileDTO currentProfile = profileService.getByChatId(update.getCallbackQuery().getMessage().getChatId().toString());
             /**For checking status (Block!)*/
-            if (currentProfile != null && currentProfile.getActiveStatus() != null) {
-                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK) && currentProfile.getPhone() != null) {
+            if (currentProfile != null && currentProfile.getPhone() != null && currentProfile.getActiveStatus() != null) {
+                if (currentProfile.getActiveStatus().equals(ActiveStatus.BLOCK)) {
                     if (currentProfile.getLanguage() != null) {
                         executeMessage(new SendMessage(currentProfile.getChatId(), resourceBundleService.getMessage("you.are.blocked", currentProfile.getLanguage())));
                     } else {
@@ -159,6 +160,41 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
     private void messageUser(Update update, ProfileDTO currentProfile) {
         Message message = update.getMessage();
         String chatId = message.getChatId().toString();
+        Language language = Language.uz;
+        if (currentProfile != null && currentProfile.getLanguage() != null) {
+            language = currentProfile.getLanguage();
+        }
+        if (message.hasLocation() || message.getFrom().getIsBot()) {
+            if (currentProfile.getCurrentStep().equals(PharmacyConstants.SEND_LOCATION_FOR_PEOPLE_PHARMACY)) {
+
+                sendPharmacy(message.getLocation(), chatId, PharmacyType.PHARMACY, currentProfile.getLanguage());
+
+                SendMessage menu = new SendMessage(chatId, resourceBundleService.getMessage("menu", language));
+                menu.setReplyMarkup(markUpsAdmin.menu(language));
+                executeMessage(menu);
+                profileService.changeStep(chatId, CommonConstants.MENU);
+            } else if (currentProfile.getCurrentStep().equals(PharmacyConstants.SEND_LOCATION_FOR_ANIMALS_PHARMACY)) {
+
+                sendPharmacy(message.getLocation(), chatId, PharmacyType.VET_PHARMACY, currentProfile.getLanguage());
+
+                SendMessage menu = new SendMessage(chatId, resourceBundleService.getMessage("menu", language));
+                menu.setReplyMarkup(markUpsAdmin.menu(language));
+                executeMessage(menu);
+                profileService.changeStep(chatId, CommonConstants.MENU);
+            }else if ("VET,DENTIST,LOR,PEDIATRICIAN,CARDIOLOGIST,DERMATOLOGIST,NEUROLOGIST,OPHTHALMOLOGIST,ORTHOPEDIST,UROLOGIST,DIETICIAN,PSYCHOLOGIST"
+                    .contains(currentProfile.getCurrentStep())){
+                sendHospital(message.getLocation(),chatId,currentProfile.getCurrentStep(),currentProfile.getLanguage());
+            }
+            return;
+
+        }
+
+        String text = message.getText();
+        String currentStep = "";
+        if (currentProfile != null && currentProfile.getCurrentStep() != null) {
+            currentStep = currentProfile.getCurrentStep();
+        }
+
         if (currentProfile == null) {
             ProfileDTO profile = new ProfileDTO();
             profile.setChatId(chatId);
@@ -182,7 +218,6 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 return;
             }
         } else if (currentProfile.getPhone() == null) {
-            Language language = currentProfile.getLanguage();
             if (message.hasContact()) {
                 Contact contact = message.getContact();
                 ProfileDTO profile = new ProfileDTO();
@@ -208,8 +243,105 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             } else if (language != null) {
                 sendMessageAboutInvalidInput(language, chatId);
             }
+        } else if (currentStep.equals(PharmacyConstants.SEND_LOCATION_FOR_PEOPLE_PHARMACY) ||
+                currentStep.equals(PharmacyConstants.SEND_LOCATION_FOR_ANIMALS_PHARMACY)) {
+            if (text.equals(resourceBundleService.getMessage("back", language))) {
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("location.has.been.cancelled", language));
+                sendMessage.setReplyMarkup(new ReplyKeyboardRemove(true));
+                executeMessage(sendMessage);
+                SendMessage menu = new SendMessage(chatId, resourceBundleService.getMessage("choose.pharmacy.type", language));
+                menu.setReplyMarkup(markUpsAdmin.pharmacyType(language));
+                executeMessage(menu);
+                profileService.changeStep(chatId, PharmacyConstants.PHARMACY);
+            }else {
+                sendMessageAboutInvalidInput(language,chatId);
+            }
+        } else if ("VET,DENTIST,LOR,PEDIATRICIAN,CARDIOLOGIST,DERMATOLOGIST,NEUROLOGIST,OPHTHALMOLOGIST,ORTHOPEDIST,UROLOGIST,DIETICIAN,PSYCHOLOGIST".contains(currentStep)) {
+            if (text.equals(CommonConstants.BACK)) {
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("location.has.been.cancelled", language));
+                sendMessage.setReplyMarkup(new ReplyKeyboardRemove(true));
+                executeMessage(sendMessage);
+                SendMessage menu = new SendMessage(chatId, resourceBundleService.getMessage("choose.hospital.type", language));
+                menu.setReplyMarkup(markUpsUser.hospitalType(language));
+                executeMessage(menu);
+                profileService.changeStep(chatId, HospitalConstants.HOSPITAL);
+            }else {
+                sendMessageAboutInvalidInput(language,chatId);
+            }
         }
     }
+
+    private void sendHospital(Location location, String chatId, String currentStep, Language language) {
+
+
+    }
+
+    private void sendPharmacy(Location location, String chatId, PharmacyType pharmacy, Language language) {
+        List<PharmacyMapper> list = pharmacyService.
+                get10pharmacy(location.getLatitude(), location.getLongitude(), pharmacy.name());
+        int count = 0;
+        for (PharmacyMapper pharmacyMapper : list) {
+            StringBuilder text = new StringBuilder();
+            text.append(resourceBundleService.getMessage("pharmacy.name", language)).append(" :: ").append(pharmacyMapper.getPharmacyName()).append("\n");
+            text.append(resourceBundleService.getMessage("phone.number", language)).append(" :: ").append(pharmacyMapper.getPhone()).append("\n");
+            text.append(resourceBundleService.getMessage("pharmacy.work.time", language)).append(" :: ").append(pharmacyMapper.getPharmacyStartTime())
+                    .append(" : ").append(pharmacyMapper.getPharmacyEndTime()).append("\n");
+            text.append(resourceBundleService.getMessage("pharmacy.user.name", language)).append(" :: ").append(pharmacyMapper.getUserName()).append("\n");
+            text.append(resourceBundleService.getMessage("distance", language)).append(" :: ").append(pharmacyMapper.getDistance()).append("\n");
+            text.append(resourceBundleService.getMessage("pharmacy.info", language)).append(" :: ");
+            switch (language) {
+                case uz -> text.append(pharmacyMapper.getPharmacyUz()).append("\n");
+                case ru -> text.append(pharmacyMapper.getPharmacyRu()).append("\n");
+                case en -> text.append(pharmacyMapper.getPharmacyEn()).append("\n");
+                case tr -> text.append(pharmacyMapper.getPharmacyTr()).append("\n");
+            }
+
+            List<MediaDTO> mediaDTOList = mediaService.getByOwnerId(pharmacyMapper.getPharmacyId());
+            List<InputMedia> mediaList = new LinkedList<>();
+            for (MediaDTO mediaDTO : mediaDTOList) {
+                if (mediaDTO.getMediaType().equals(MediaType.PHOTO)) {
+                    InputMedia photo = new InputMediaPhoto();
+                    photo.setMedia(mediaDTO.getFId());
+                    mediaList.add(photo);
+                } else if (mediaDTO.getMediaType().equals(MediaType.VIDEO)) {
+                    InputMedia video = new InputMediaVideo();
+                    video.setMedia(mediaDTO.getFId());
+                    mediaList.add(video);
+                }
+                count++;
+                if (count % 10 == 0 || (count % 10 != 1 && mediaDTOList.size() == count)) {
+                    executeMediaGroup(new SendMediaGroup(chatId, mediaList));
+                    mediaList = new LinkedList<>();
+                }
+                if (count % 10 == 1 && mediaDTOList.size() == count) {
+                    if (mediaDTO.getMediaType().equals(MediaType.PHOTO)) {
+                        SendPhoto sendPhoto = new SendPhoto();
+                        sendPhoto.setPhoto(new InputFile(mediaDTO.getFId()));
+                        sendPhoto.setChatId(chatId);
+                        sendPhoto.setCaption(text.toString());
+                        executePhoto(sendPhoto);
+                    } else if (mediaDTO.getMediaType().equals(MediaType.VIDEO)) {
+                        SendVideo sendVideo = new SendVideo();
+                        sendVideo.setVideo(new InputFile(mediaDTO.getFId()));
+                        sendVideo.setChatId(chatId);
+                        sendVideo.setCaption(text.toString());
+                        executeVideo(sendVideo);
+                    }
+                }
+            }
+            if (mediaList.size() % 10 != 1) {
+                executeMessage(new SendMessage(chatId, text.toString()));
+            }
+            SendLocation location1 = new SendLocation();
+            location1.setLatitude(pharmacyMapper.getLatitude());
+            location1.setLongitude(pharmacyMapper.getLongitude());
+            location1.setChatId(chatId);
+
+            executeLocation(location1);
+        }
+
+    }
+
 
     /**
      * For checking input callbackQuery from User and return response
@@ -217,7 +349,12 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
     private void callBQUser(Update update, ProfileDTO currentProfile) {
         CallbackQuery query = update.getCallbackQuery();
         String chatId = currentProfile.getChatId();
-
+        String data = query.getData();
+        String currentStep = currentProfile.getCurrentStep();
+        Language language = Language.uz;
+        if (currentProfile.getLanguage() != null) {
+            language = currentProfile.getLanguage();
+        }
         if (currentProfile.getCurrentStep().equals(CommonConstants.LANGUAGE)) {
             if (currentProfile.getLanguage() == null) {
                 if (query.getMessage().getText().contains(resourceBundleService.getMessage("choosing.language", Language.uz))
@@ -236,18 +373,85 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 }
 
             } else {
-                if (query.getMessage().getText().contains(resourceBundleService.getMessage("choosing.language", currentProfile.getLanguage()))) {
-                    Language language = Language.valueOf(query.getData());
-                    profileService.changeLanguage(chatId, Language.valueOf(query.getData()));
+                if ("uz,tr,ru,en".contains(data)) {
+                    profileService.changeLanguage(chatId, Language.valueOf(data));
                     profileService.changeStep(chatId, CommonConstants.MENU);
-                    SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("menu", language));
-                    sendMessage.setReplyMarkup(markUpsUser.menu(language));
-                    executeMessage(sendMessage);
+                    EditMessageText editMessageText = new EditMessageText(resourceBundleService.getMessage("menu", Language.valueOf(data)));
+                    editMessageText.setChatId(chatId);
+                    editMessageText.setMessageId(query.getMessage().getMessageId());
+                    editMessageText.setReplyMarkup((InlineKeyboardMarkup) markUpsAdmin.menu(Language.valueOf(data)));
+                    executeEditMessage(editMessageText);
                 } else {
-                    sendMessageAboutInvalidInput(currentProfile.getLanguage(), chatId);
+                    sendMessageAboutInvalidInput(language, chatId);
+                }
+
+            }
+        } else if (currentStep.equals(CommonConstants.MENU)) {
+            switch (data) {
+                case PharmacyConstants.PHARMACY -> {
+                    executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                    SendMessage menu = new SendMessage(chatId, resourceBundleService.getMessage("choose.pharmacy.type", language));
+                    menu.setReplyMarkup(markUpsAdmin.pharmacyType(language));
+                    executeMessage(menu);
+                    profileService.changeStep(chatId, PharmacyConstants.PHARMACY);
+                }
+                case HospitalConstants.HOSPITAL -> {
+                    executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                    SendMessage menu = new SendMessage(chatId, resourceBundleService.getMessage("choose.hospital.type", language));
+                    menu.setReplyMarkup(markUpsUser.hospitalType(language));
+                    executeMessage(menu);
+                    profileService.changeStep(chatId, HospitalConstants.HOSPITAL);
+                }
+                case AutoConstants.AUTO -> {//todo
+                }
+                case HouseConstants.HOUSE -> {//todo
+                }
+                case ShopConstants.SHOP -> {//todo
+                }
+                default -> sendMessageAboutInvalidInput(language, chatId);
+            }
+
+        } else if (currentStep.equals(PharmacyConstants.PHARMACY)) {
+            switch (data) {
+                case CommonConstants.BACK -> {
+                    executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                    SendMessage menu = new SendMessage(chatId, resourceBundleService.getMessage("menu", language));
+                    menu.setReplyMarkup(markUpsAdmin.menu(language));
+                    executeMessage(menu);
+                    profileService.changeStep(chatId, CommonConstants.MENU);
+                }
+                case PharmacyConstants.PHARMACY_FOR_PEOPLE -> {
+                    executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                    SendMessage location = new SendMessage(chatId, resourceBundleService.getMessage("location", language));
+                    location.setReplyMarkup(markUps.getBackButton(language));
+                    executeMessage(location);
+                    profileService.changeStep(chatId, PharmacyConstants.SEND_LOCATION_FOR_PEOPLE_PHARMACY);
+                }
+                case PharmacyConstants.PHARMACY_FOR_ANIMALS -> {
+                    executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                    SendMessage location = new SendMessage(chatId, resourceBundleService.getMessage("location", language));
+                    location.setReplyMarkup(markUps.getBackButton(language));
+                    executeMessage(location);
+                    profileService.changeStep(chatId, PharmacyConstants.SEND_LOCATION_FOR_ANIMALS_PHARMACY);
                 }
             }
+        } else if (currentStep.equals(HospitalConstants.HOSPITAL)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage menu = new SendMessage(chatId, resourceBundleService.getMessage("menu", language));
+                menu.setReplyMarkup(markUpsAdmin.menu(language));
+                executeMessage(menu);
+                profileService.changeStep(chatId, CommonConstants.MENU);
+            } else if ("VET,DENTIST,LOR,PEDIATRICIAN,CARDIOLOGIST,DERMATOLOGIST,NEUROLOGIST,OPHTHALMOLOGIST,ORTHOPEDIST,UROLOGIST,DIETICIAN,PSYCHOLOGIST".contains(data)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage location = new SendMessage(chatId, resourceBundleService.getMessage("location", language));
+                location.setReplyMarkup(markUps.getBackButton(language));
+                executeMessage(location);
+                profileService.changeStep(chatId, data);
+            }
+
         }
+
     }
 
 
@@ -963,7 +1167,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 Language language1 = Language.valueOf(data);
                 profileService.changeLanguage(chatId, Language.valueOf(data));
                 profileService.changeStep(chatId, CommonConstants.MENU);
-                EditMessageText editMessageText = new EditMessageText(resourceBundleService.getMessage("menu", language));
+                EditMessageText editMessageText = new EditMessageText(resourceBundleService.getMessage("menu", language1));
                 editMessageText.setChatId(chatId);
                 editMessageText.setMessageId(query.getMessage().getMessageId());
                 editMessageText.setReplyMarkup((InlineKeyboardMarkup) markUpsAdmin.menu(language1));
@@ -2756,6 +2960,17 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
     }
 
     // ===================================== EXECUTE ===================
+
+    /**
+     * For execute SendLocation
+     */
+    public void executeLocation(SendLocation location) {
+        try {
+            messageSender.execute(location);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * For execute SendMessage

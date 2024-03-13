@@ -29,4 +29,5 @@ public class PharmacyDTO {
     private Double longitude;
     private LocalDateTime createdDateTime;
     private String ownerChatId;
+    private Double distance;
 }
