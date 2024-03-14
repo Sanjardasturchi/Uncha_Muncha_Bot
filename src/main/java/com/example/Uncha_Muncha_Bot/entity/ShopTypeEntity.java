@@ -13,8 +13,8 @@ public class ShopTypeEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "shop_id")
-    private Integer shopId;
+    @Column(name = "owner_id")
+    private Long shopId;
 
     @Column(name = "shop_type")
     private String shopType;

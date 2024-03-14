@@ -4,6 +4,7 @@ import com.example.Uncha_Muncha_Bot.constants.*;
 import com.example.Uncha_Muncha_Bot.enums.CarType;
 import com.example.Uncha_Muncha_Bot.enums.HospitalService;
 import com.example.Uncha_Muncha_Bot.enums.Language;
+import com.example.Uncha_Muncha_Bot.enums.ShopType;
 import com.example.Uncha_Muncha_Bot.service.ResourceBundleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -713,6 +714,108 @@ public class MarkUpsAdmin {
 
         button.setText(resourceBundleService.getMessage("truck", language));
         button.setCallbackData(CarType.TRUCK.name());
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
+
+    public ReplyKeyboard shopMenu(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("create.new", language));
+        button.setCallbackData(ShopConstants.CREAT);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("add.media", language));
+        button.setCallbackData(ShopConstants.ADD_MEDIA);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("block", language));
+        button.setCallbackData(ShopConstants.BLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("unblock", language));
+        button.setCallbackData(ShopConstants.UNBLOCK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.all", language));
+        button.setCallbackData(ShopConstants.GET_ALL);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("get.by.id", language));
+        button.setCallbackData(ShopConstants.GET_BY_ID);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
+
+    public ReplyKeyboard shopType(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("food.shop", language));
+        button.setCallbackData(ShopType.FOOD_SHOP.name());
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("vegetable.shop", language));
+        button.setCallbackData(ShopType.VEGETABLES_SHOP.name());
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("clothes.shop", language));
+        button.setCallbackData(ShopType.CLOTHES_SHOP.name());
 
         buttonsRow.add(button);
         rowList.add(buttonsRow);

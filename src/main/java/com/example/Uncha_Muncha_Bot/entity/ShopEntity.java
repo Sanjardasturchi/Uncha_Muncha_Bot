@@ -25,8 +25,20 @@ public class ShopEntity {
     @Column(name = "district")
     private String district;
 
-    @Column(name = "info")
-    private String info;
+    @Column(name = "brand")
+    private String brand;
+
+    @Column(name = "info_uz")
+    private String infoUz;
+
+    @Column(name = "info_tr")
+    private String infoTr;
+
+    @Column(name = "info_ru")
+    private String infoRu;
+
+    @Column(name = "info_en")
+    private String infoEn;
 
     @Column(name = "start_time")
     private LocalTime startTime;
@@ -47,11 +59,11 @@ public class ShopEntity {
     private Double longitude;
 
     @Column(name = "created_date_time")
-    private LocalDateTime createdDateTime;
+    private LocalDateTime createdDateTime=LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "active_status")
-    private ActiveStatus activeStatus;
+    private ActiveStatus activeStatus=ActiveStatus.BLOCK;
 
     @Column(name = "owner_chat_id")
     private String ownerChatId;

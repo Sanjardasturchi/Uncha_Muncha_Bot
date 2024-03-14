@@ -15,7 +15,11 @@ public class ShopDTO {
     private List <ShopTypeDTO> shopTypes;
     private String city;
     private String district;
-    private String info;
+    private String brand;
+    private String infoUz;
+    private String infoTr;
+    private String infoRu;
+    private String infoEn;
     private LocalTime startTime;
     private LocalTime endTime;
     private String phone;
