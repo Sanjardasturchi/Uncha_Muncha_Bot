@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 public class ShopTypeDTO {
     private Long id;
-    private Integer shopId;
+    private Long shopId;
     private String shopType;
 }
