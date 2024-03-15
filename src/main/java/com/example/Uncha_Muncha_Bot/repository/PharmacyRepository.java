@@ -2,6 +2,8 @@ package com.example.Uncha_Muncha_Bot.repository;
 
 import com.example.Uncha_Muncha_Bot.entity.PharmacyEntity;
 import com.example.Uncha_Muncha_Bot.enums.ActiveStatus;
+import com.example.Uncha_Muncha_Bot.enums.PharmacyType;
+import com.example.Uncha_Muncha_Bot.mapper.PharmacyMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -70,6 +72,9 @@ public interface PharmacyRepository extends CrudRepository<PharmacyEntity, Long>
     @Modifying
     @Query("update PharmacyEntity set activeStatus=?1 where id=?2")
     void changeStatus(ActiveStatus status, Long pharmacyId);
+
+    @Query(value = "SELECT * from get_nearest_pharmacies(?1,?2,?3)",nativeQuery = true)
+    List<PharmacyMapper> get10pharmacy(Double latitude, Double longitude, String pharmacy);
 
 
     @Query("from PharmacyEntity order by createdDateTime desc ")

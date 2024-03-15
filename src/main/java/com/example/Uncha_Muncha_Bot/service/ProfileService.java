@@ -1,5 +1,6 @@
 package com.example.Uncha_Muncha_Bot.service;
 
+import com.example.Uncha_Muncha_Bot.dto.PharmacyDTO;
 import com.example.Uncha_Muncha_Bot.dto.ProfileDTO;
 import com.example.Uncha_Muncha_Bot.entity.ProfileEntity;
 import com.example.Uncha_Muncha_Bot.enums.ActiveStatus;
@@ -182,4 +183,6 @@ public class ProfileService {
     public void changeChangingElementId(String chatId, Long advertisingId) {
         profileRepository.changeChangingElementId(chatId, advertisingId);
     }
+
+
 }
