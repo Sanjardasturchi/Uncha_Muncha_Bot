@@ -830,4 +830,110 @@ public class MarkUpsAdmin {
 
         return new InlineKeyboardMarkup(rowList);
     }
+
+    public ReplyKeyboard autoServiceType(Language language) {
+        List<InlineKeyboardButton> buttonsRow = new LinkedList<>();
+        List<List<InlineKeyboardButton>> rowList = new LinkedList<>();
+
+        InlineKeyboardButton button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("methane", language));
+        button.setCallbackData(AutoServicesConstants.METHANE);
+
+        buttonsRow.add(button);
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("propane", language));
+        button.setCallbackData(AutoServicesConstants.PROPANE);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        buttonsRow = new LinkedList<>();
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("gasoline", language));
+        button.setCallbackData(AutoServicesConstants.GASOLINE);
+
+        buttonsRow.add(button);
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("electric.vehicle.charging.station", language));
+        button.setCallbackData(AutoServicesConstants.ELECTRIC_VEHICLE_CHARGING_STATION);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        buttonsRow = new LinkedList<>();
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("car.wash", language));
+        button.setCallbackData(AutoServicesConstants.CAR_WASH);
+
+        buttonsRow.add(button);
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("autotuning.and.detailing", language));
+        button.setCallbackData(AutoServicesConstants.AUTOTUNING_AND_DETAILING);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        button = new InlineKeyboardButton();
+        buttonsRow = new LinkedList<>();
+
+        button.setText(resourceBundleService.getMessage("tow.truck", language));
+        button.setCallbackData(AutoServicesConstants.TOW_TRUCK);
+
+        buttonsRow.add(button);
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("oil.change", language));
+        button.setCallbackData(AutoServicesConstants.OIL_CHANGE);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        buttonsRow = new LinkedList<>();
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("auto.body.builder", language));
+        button.setCallbackData(AutoServicesConstants.AUTO_BODY_BUILDER);
+
+        buttonsRow.add(button);
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("vulcanization", language));
+        button.setCallbackData(AutoServicesConstants.VULCANIZATION);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        buttonsRow = new LinkedList<>();
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("electrician", language));
+        button.setCallbackData(AutoServicesConstants.ELECTRICIAN);
+
+        buttonsRow.add(button);
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("other", language));
+        button.setCallbackData(AutoServicesConstants.OTHER);
+
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+        buttonsRow = new LinkedList<>();
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("back", language));
+        button.setCallbackData(CommonConstants.BACK);
+
+        buttonsRow.add(button);
+        button = new InlineKeyboardButton();
+
+        button.setText(resourceBundleService.getMessage("next", language));
+        button.setCallbackData(CommonConstants.NEXT);
+
+        buttonsRow.add(button);
+        rowList.add(buttonsRow);
+
+        return new InlineKeyboardMarkup(rowList);
+    }
 }

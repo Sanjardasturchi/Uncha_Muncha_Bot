@@ -2,14 +2,17 @@ package com.example.Uncha_Muncha_Bot.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.util.Locale;
 
 @Configuration
@@ -42,6 +45,17 @@ public class AppConfig {
     @Bean
     TelegramBotsApi telegramBotsApi() throws TelegramApiException {
         return new TelegramBotsApi(DefaultBotSession.class);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        RestTemplateBuilder builder = new RestTemplateBuilder();
+        return builder
+                .setConnectTimeout(Duration.ofSeconds(3l))
+                .setReadTimeout(Duration.ofSeconds(3l))
+                .build();
+//        RestTemplate restTemplate = new RestTemplate();
+//        return restTemplate;
     }
 
 
