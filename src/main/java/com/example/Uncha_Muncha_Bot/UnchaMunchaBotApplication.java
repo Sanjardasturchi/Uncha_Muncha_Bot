@@ -10,6 +10,7 @@ public class UnchaMunchaBotApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(UnchaMunchaBotApplication.class, args);
 		System.out.println("App start");
+
 	}
 
 }

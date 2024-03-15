@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 public class AutomobileServiceTypeDTO {
     private Long id;
-    private Integer AutoServiceId;
+    private Long AutoServiceId;
     private String serviceName;
 }

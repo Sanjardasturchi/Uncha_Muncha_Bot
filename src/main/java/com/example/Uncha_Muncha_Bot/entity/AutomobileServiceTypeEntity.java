@@ -13,7 +13,7 @@ public class AutomobileServiceTypeEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     @Column(name = "auto_service_id")
-    private Integer autoServiceId;
+    private Long autoServiceId;
     @Column(name = "service_name")
     private String serviceName;
 }

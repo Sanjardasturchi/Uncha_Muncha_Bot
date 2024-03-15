@@ -76,6 +76,8 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
     private AutoSalonService autoSalonService;
     @Autowired
     private ShopService shopService;
+    @Autowired
+    private AutoServicesService autoServicesService;
 
     @Override
     public void handle(Update update) {
@@ -1082,7 +1084,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                         profileService.changeStep(chatId, ShopConstants.SHOP);
 //                    } else if (currentStep.equals(ShopConstants.GET_BY_ID)){
                     } else {
-                        sendShopList(message,chatId,language,List.of(shop));
+                        sendShopList(message, chatId, language, List.of(shop));
                         profileService.changeStep(chatId, ShopConstants.SHOP);
                     }
                 } catch (Exception e) {
@@ -1091,7 +1093,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             } else if (currentStep.equals(ShopConstants.ENTER_MEDIA)) {
                 if (text.equals(CommonConstants.BACK) ||
                         text.equals(CommonConstants.NEXT)) {
-                    SendMessage message1=new SendMessage(chatId, resourceBundleService.getMessage("media.saved", language));
+                    SendMessage message1 = new SendMessage(chatId, resourceBundleService.getMessage("media.saved", language));
                     message1.setReplyMarkup(new ReplyKeyboardRemove(true));
                     executeMessage(message1);
                     SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("shop.menu", language));
@@ -1099,7 +1101,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                     executeMessage(sendMessage);
                     profileService.changeStep(chatId, ShopConstants.SHOP);
                 } else {
-                    sendMessageAboutInvalidInput(language,chatId);
+                    sendMessageAboutInvalidInput(language, chatId);
                 }
             }
 
@@ -1764,19 +1766,137 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 executeMessage(sendMessage);
                 profileService.changeStep(chatId, AutoServicesConstants.CREAT);
             } else if (data.equals(AutoServicesConstants.ADD_MEDIA)) {
-                //todo
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
+                profileService.changeStep(chatId, AutoServicesConstants.ADD_MEDIA);
             } else if (data.equals(AutoServicesConstants.BLOCK)) {
-                //todo
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
+                profileService.changeStep(chatId, AutoServicesConstants.BLOCK);
             } else if (data.equals(AutoServicesConstants.UNBLOCK)) {
-                //todo
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
+                profileService.changeStep(chatId, AutoServicesConstants.UNBLOCK);
             } else if (data.equals(AutoServicesConstants.GET_ALL)) {
-                //todo
+                sendAutoServicesList(query.getMessage(), chatId, language, null);
+                profileService.changeStep(chatId, AutoServicesConstants.AUTO_SERVICES_MENU);
             } else if (data.equals(AutoServicesConstants.GET_BY_ID)) {
-                //todo
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
+                profileService.changeStep(chatId, AutoServicesConstants.GET_BY_ID);
             } else {
                 executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
             }
+        } else if (currentStep.equals(AutoServicesConstants.CREAT)) {
+            if (data.equals(SuperAdminConstants.ACCEPT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                Long salonId = autoServicesService.createService(chatId);
+                profileService
+                        .changeChangingElementId(chatId, salonId);
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("create.new", language) + " id :: " + salonId));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("choose.services", language) + ")");
+                sendMessage.setReplyMarkup(markUpsAdmin.autoServiceType(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoServicesConstants.CHOOSE_SERVICE_TYPE);
+
+            } else if (data.equals(SuperAdminConstants.NO_ACCEPT)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.services.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoSalonMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoServicesConstants.AUTO_SERVICES_MENU);
+            } else {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+            }
+        } else if (currentStep.equals(AutoServicesConstants.CHOOSE_SERVICE_TYPE)) {
+            if (data.equals(CommonConstants.BACK)) {
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.services.menu", language));
+                sendMessage.setReplyMarkup(markUpsAdmin.autoSalonMenu(language));
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId, AutoServicesConstants.AUTO_SERVICES_MENU);
+            } else if (data.equals(CommonConstants.NEXT)) {
+                if (autoServicesService.getAllById(currentProfile.getChangingElementId()).size()==0) {
+                    return;
+                }
+                executeDeleteMessage(new DeleteMessage(chatId,query.getMessage().getMessageId()));
+                SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("choose.start.time", language));
+                sendMessage.setReplyMarkup(markUps.time());
+                executeMessage(sendMessage);
+                profileService.changeStep(chatId,AutoServicesConstants.ENTER_START_TIME);
+            } else if (data.equals(AutoServicesConstants.METHANE) ||
+                    data.equals(AutoServicesConstants.PROPANE) ||
+                    data.equals(AutoServicesConstants.GASOLINE) ||
+                    data.equals(AutoServicesConstants.ELECTRIC_VEHICLE_CHARGING_STATION) ||
+                    data.equals(AutoServicesConstants.CAR_WASH) ||
+                    data.equals(AutoServicesConstants.AUTOTUNING_AND_DETAILING) ||
+                    data.equals(AutoServicesConstants.TOW_TRUCK) ||
+                    data.equals(AutoServicesConstants.OIL_CHANGE) ||
+                    data.equals(AutoServicesConstants.AUTO_BODY_BUILDER) ||
+                    data.equals(AutoServicesConstants.VULCANIZATION) ||
+                    data.equals(AutoServicesConstants.ELECTRICIAN) ||
+                    data.equals(AutoServicesConstants.OTHER)) {
+                autoServicesService.checkServiceType(data, currentProfile.getChangingElementId());
+                StringBuilder builder = new StringBuilder();
+                for (AutomobileServiceTypeDTO dto : autoServicesService.getAllById(currentProfile.getChangingElementId())) {
+                    if (dto.getServiceName().equals(AutoServicesConstants.METHANE)) {
+                        builder.append(resourceBundleService.getMessage("methane", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.PROPANE)) {
+                        builder.append(resourceBundleService.getMessage("propane", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.GASOLINE)) {
+                        builder.append(resourceBundleService.getMessage("gasoline", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.ELECTRIC_VEHICLE_CHARGING_STATION)) {
+                        builder.append(resourceBundleService.getMessage("electric.vehicle.charging.station", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.CAR_WASH)) {
+                        builder.append(resourceBundleService.getMessage("car.wash", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.AUTOTUNING_AND_DETAILING)) {
+                        builder.append(resourceBundleService.getMessage("autotuning.and.detailing", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.TOW_TRUCK)) {
+                        builder.append(resourceBundleService.getMessage("tow.truck", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.OIL_CHANGE)) {
+                        builder.append(resourceBundleService.getMessage("oil.change", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.AUTO_BODY_BUILDER)) {
+                        builder.append(resourceBundleService.getMessage("auto.body.builder", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.VULCANIZATION)) {
+                        builder.append(resourceBundleService.getMessage("vulcanization", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.ELECTRICIAN)) {
+                        builder.append(resourceBundleService.getMessage("electrician", language));
+                    } else if (dto.getServiceName().equals(AutoServicesConstants.OTHER)) {
+                        builder.append(resourceBundleService.getMessage("other", language));
+                    }
+                    builder.append(", ");
+                }
+                String text = resourceBundleService.getMessage("choose.services", language);
+                if (builder.length() == 0) {
+                    text = text + ")";
+                } else {
+                    text=text+builder.substring(0,builder.length()-2)+")";
+                }
+                executeDeleteMessage(new DeleteMessage(chatId,query.getMessage().getMessageId()));
+                SendMessage message=new SendMessage(chatId,text);
+                message.setReplyMarkup(markUpsAdmin.autoServiceType(language));
+                executeMessage(message);
+            } else {
+                executeDeleteMessage(new DeleteMessage(chatId,query.getMessage().getMessageId()));
+            }
+        } else if (currentStep.equals(AutoServicesConstants.ENTER_START_TIME)) {
+
         } else if (currentStep.equals(AutoSparePartsShopConstants.AUTO_SPARE_PARTS_SHOP)) {
+            //4.AutoService
+            //        1.Creat
+            //           acsept -> AutomobileServiceType(s) -> carType -> startTime -> endTime
+            //           -> city -> BrandName -> phone
+            //           -> username -> info -> (district) -> location
+            //        2.Add Photo
+            //           id -> photo
+            //        3.Add Video
+            //           id -> video
+            //        4.Make Block
+            //           id
+            //        5.Make UnBlock
+            //           id
+            //        6.Take All
+            //        7.Take By id
             if (data.equals(CommonConstants.BACK)) {
                 executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
                 SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.menu", language));
@@ -1790,15 +1910,24 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 executeMessage(sendMessage);
                 profileService.changeStep(chatId, AutoSparePartsShopConstants.CREAT);
             } else if (data.equals(AutoSparePartsShopConstants.ADD_MEDIA)) {
-                //todo
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
+                profileService.changeStep(chatId, AutoSparePartsShopConstants.ADD_MEDIA);
             } else if (data.equals(AutoSparePartsShopConstants.BLOCK)) {
-                //todo
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
+                profileService.changeStep(chatId, AutoSparePartsShopConstants.BLOCK);
             } else if (data.equals(AutoSparePartsShopConstants.UNBLOCK)) {
-                //todo
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
+                profileService.changeStep(chatId, AutoSparePartsShopConstants.UNBLOCK);
             } else if (data.equals(AutoSparePartsShopConstants.GET_ALL)) {
-                //todo
+                sendAutoSparePartsShopList(query.getMessage(), chatId, language, null);
+                profileService.changeStep(chatId, AutoSparePartsShopConstants.AUTO_SPARE_PARTS_SHOP);
             } else if (data.equals(AutoSparePartsShopConstants.GET_BY_ID)) {
-                //todo
+                executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
+                executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
+                profileService.changeStep(chatId, AutoSparePartsShopConstants.GET_BY_ID);
             } else {
                 executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
             }
@@ -1828,7 +1957,7 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
                 executeMessage(new SendMessage(chatId, resourceBundleService.getMessage("enter.id", language)));
                 profileService.changeStep(chatId, ShopConstants.UNBLOCK);
             } else if (data.equals(ShopConstants.GET_ALL)) {
-                sendShopList(query.getMessage(),chatId,language,null);
+                sendShopList(query.getMessage(), chatId, language, null);
                 profileService.changeStep(chatId, ShopConstants.SHOP);
             } else if (data.equals(ShopConstants.GET_BY_ID)) {
                 executeDeleteMessage(new DeleteMessage(chatId, query.getMessage().getMessageId()));
@@ -1935,8 +2064,15 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
     }
 
 
-
     //================================ Sending XLSX (Excel files)========
+
+    private void sendAutoSparePartsShopList(Message message, String chatId, Language language, List<AutoSparePartsShopDTO> autoSparePartsShopDTOS) {
+        // todo
+    }
+
+    private void sendAutoServicesList(Message message, String chatId, Language language, List<AutomobileServiceDTO> automobileServiceDTOS) {
+        // todo
+    }
 
     private void sendShopList(Message message, String chatId, Language language, List<ShopDTO> shopDTOList) {
         if (shopDTOList == null) {
@@ -2067,16 +2203,16 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             }
         }
         try {
-            workbook.write(new FileOutputStream("src/main/resources/shop.xlsx"));
+            workbook.write(new FileOutputStream("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\shop.xlsx"));
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("src\\main\\resources\\shop.xlsx")));
+        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\shop.xlsx")));
         executeDocument(sendDocument);
         executeDeleteMessage(new DeleteMessage(chatId, message.getMessageId()));
-        SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.salon.menu", language));
+        SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("shop.menu", language));
         sendMessage.setReplyMarkup(markUpsAdmin.shopMenu(language));
         executeMessage(sendMessage);
 
@@ -2199,13 +2335,13 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             }
         }
         try {
-            workbook.write(new FileOutputStream("src/main/resources/autoSalon.xlsx"));
+            workbook.write(new FileOutputStream("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src/main/resources/autoSalon.xlsx"));
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("src\\main\\resources\\autoSalon.xlsx")));
+        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\autoSalon.xlsx")));
         executeDocument(sendDocument);
         executeDeleteMessage(new DeleteMessage(chatId, message.getMessageId()));
         SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.salon.menu", language));
@@ -2366,12 +2502,12 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             }
         }
         try {
-            workbook.write(new FileOutputStream("src/main/resources/automobile.xlsx"));
+            workbook.write(new FileOutputStream("./src/main/resources/automobile.xlsx"));
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("src/main/resources/automobile.xlsx")));
+        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("./src/main/resources/automobile.xlsx")));
         executeDocument(sendDocument);
         executeDeleteMessage(new DeleteMessage(chatId, message.getMessageId()));
         SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("auto.bought.menu", language));
@@ -2646,13 +2782,13 @@ public class UnchaMunchaBotController extends AbstractUpdateController {
             }
         }
         try {
-            workbook.write(new FileOutputStream("src/main/resources/pharmacy.xlsx"));
+            workbook.write(new FileOutputStream("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\pharmacy.xlsx"));
             workbook.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("src\\main\\resources\\pharmacy.xlsx")));
+        SendDocument sendDocument = new SendDocument(chatId, new InputFile(new File("C:\\Projects\\Uncha Muncha Bot\\Uncha-Muncha_Bot\\src\\main\\resources\\pharmacy.xlsx")));
         executeDocument(sendDocument);
         executeDeleteMessage(new DeleteMessage(chatId, message.getMessageId()));
         SendMessage sendMessage = new SendMessage(chatId, resourceBundleService.getMessage("pharmacy.menu", language));

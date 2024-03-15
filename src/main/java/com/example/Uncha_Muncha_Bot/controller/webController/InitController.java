@@ -9,7 +9,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 
-
 @Controller
 @RequestMapping("")
 public class InitController {

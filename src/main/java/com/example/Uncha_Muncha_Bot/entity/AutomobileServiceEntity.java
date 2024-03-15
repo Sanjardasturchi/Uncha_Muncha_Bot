@@ -38,9 +38,9 @@ public class AutomobileServiceEntity {
     @Column(name = "end_time")
     private LocalTime endTime;
     @Column(name = "created_date_time")
-    private LocalDateTime createdDateTime;
+    private LocalDateTime createdDateTime=LocalDateTime.now();
     @Column(name = "active_status")
-    private ActiveStatus activeStatus;
+    private ActiveStatus activeStatus=ActiveStatus.BLOCK;
     @Column(name = "owner_chat_id")
     private String ownerChatId;
 }
